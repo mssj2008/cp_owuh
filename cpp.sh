@@ -1,0 +1,1 @@
+g++ owuh.cpp -o owuh && echo compile complete && ./owuh
