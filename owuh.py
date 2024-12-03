@@ -1,1 +1,2 @@
-print("mmph");
+
+print("mmph")
