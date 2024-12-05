@@ -3,52 +3,66 @@
 using namespace std;
 
 #define endl "\n";
+#define  inrange(x) ((x)>=0 && (x)<=7)
+#define cinrange(x) (inrage((x).first) && inrange((x).second))
+typedef long long ll;
+typedef unsigned long long ull;
 
-void solve()
+ull tpow(int x)
 {
-    int n;
-    cin >> n;
-    multiset<int> s;
-    int ans = 0;
-    while(n--)
-    {
-        int a;
-        cin >> a;
-        s.insert(a);
-        ans++;
-    }
-    ans-=2;
-    vector<pair<int,int>> facts;
-    for(int i = 1; i*i < ans+1; i++)
-    {
-        if(ans % i == 0)
-        {
-            facts.push_back({i,ans/i});
-        }
-    }
-    for(auto i : facts)
-    {
-        if(i.first == i.second && s.count(i.first) >= 2)
-        {
-            cout << i.first << " " << i.first << endl;
-            return;
-        }
-        if(i.first != i.second && s.count(i.first) && s.count(i.second))
-        {
-            cout << i.first << " " << i.second << endl;
-            return;
-        }
-    }
-    //cout << "1" << " " << ans << endl; 
+    ull n = 1;
+    for(int i = 0; i < x; i++)
+        n*= 10;
+    return n;
 }
+
+int tlog(ull n)
+{
+    string s = to_string(n);
+    return s.length()-1;
+}
+
+char getlastch(ull n)
+{
+    string s = to_string(n);
+    return s[s.length()-1];
+}
+
+ull get_chars(ull s,ull c)
+{
+    ull ans = 0;
+    c+=s-1;
+    while(tlog(s) != tlog(c))
+    {
+        ull a = (tpow(tlog(s)+1)-s)*(tlog(s)+1);
+        ans += a;
+        s = tpow(tlog(s)+1);
+    }
+    ans += (c-s+1)*(tlog(s)+1);
+    return ans;
+}
+
 
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    int tt;
-    cin >> tt;
-    while(tt--)
-        solve();
+    //ios_base::sync_with_stdio(false);
+    //cin.tie(NULL);
+    ull x,y;
+    cin >> x >> y;
+    ull c = 0x100000000000000ULL;
+    while(y > tlog(x))
+    {
+        while(get_chars(x,c) > y)
+            c = c >> 1;
+        y-=get_chars(x,c);
+        x = x+c;
+    }
+    if(y == 0)
+    {
+        cout << getlastch(x-1) << endl;
+        return 0;
+    }
+    string s = to_string(x);
+    cout << s[y-1] << endl;
     return 0;
 }

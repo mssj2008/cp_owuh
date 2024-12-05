@@ -1,4 +1,4 @@
-d="CodeForces Submissions"
+d="CodeForcesSubmissions"
 echo name the submission pweez
 read name
 cd $d

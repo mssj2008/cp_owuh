@@ -1,0 +1,4 @@
+add numbers to a multiset
+Get Factors of ans -= 2
+iterate through factor pairs
+if they exist in the set of inputs , possible     n & m output it
