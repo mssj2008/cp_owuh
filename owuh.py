@@ -33,8 +33,4 @@ def get_order(cur,curs):
         else:
             get_order(cur + c, ns)
 
-wt = input()
-st = get_score(wt)
-#order = get_order("",0)
-get_order("",0)
-#print(order)
+

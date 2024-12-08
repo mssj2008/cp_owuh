@@ -102,3 +102,4 @@ int main()
     return 0;
 }
 
+// 1a = 1b in 35 min
