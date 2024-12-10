@@ -18,13 +18,37 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 
+float tdp(float f)
+{
+    return f;
+    //return ceil(100.0*f)/100.0;
+}
 
 int main()
 {
     //ios_base::sync_with_stdio(false);
     //cin.tie(NULL);
     //Main Prog
-    
+    float debt = 100.00;
+    float i,r;
+    cin >> i >> r;
+    float tot = 0.00;
+    r /= 100.00;
+    i /= 100.00;
+    //cout << debt << endl;
+    while(debt > 0.00)
+    {
+        //cout << debt*i << endl;
+        debt += tdp(debt*i);
+        //cout << debt << endl;
+        if(max((float)50.00,tdp(debt*r)) < debt)
+            tot += max((float)50.00,tdp(debt*r));
+        //cout << max((float)50.00,tdp(debt*r)) << endl;
+        else
+            tot += debt;
+        debt -= max((float)50.00,tdp(debt*r));
+    }
+    cout << tot << endl;
     return 0;
 }
 
