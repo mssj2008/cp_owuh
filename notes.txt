@@ -6,3 +6,12 @@ the edge access:
 4 -  n+5 
 5 -  n-1
 6 -  n-5
+
+
+RRRBBGGRG
+GBGGRRBBB
+BGBRGBRGR
+
+RRRBBGGRG
+GBGGRRBBB
+BGBRGBRGR
