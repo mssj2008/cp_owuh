@@ -20,8 +20,16 @@ typedef unsigned long long ull;
 
 float tdp(float f)
 {
+    float value = (int)(f * 100 + .5);
+    return (float)value / 100;
     return f;
     //return ceil(100.0*f)/100.0;
+}
+
+float tf(float f)
+{
+    float value = (int)(f * 100 + .5);
+    return (float)value / 100;
 }
 
 int main()
@@ -38,17 +46,27 @@ int main()
     //cout << debt << endl;
     while(debt > 0.00)
     {
-        //cout << debt*i << endl;
         debt += tdp(debt*i);
-        //cout << debt << endl;
         if(max((float)50.00,tdp(debt*r)) < debt)
+        {
             tot += max((float)50.00,tdp(debt*r));
-        //cout << max((float)50.00,tdp(debt*r)) << endl;
+            //tot = tf(tot);
+        }
         else
             tot += debt;
         debt -= max((float)50.00,tdp(debt*r));
+        //debt = tf(debt);
     }
     cout << tot << endl;
     return 0;
 }
 
+
+/*
+
+flaoting point arithmetic is gae.
+avoid it with using cents...
+...
+:/
+
+*/
