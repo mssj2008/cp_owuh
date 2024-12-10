@@ -72,4 +72,4 @@ start = time()
 print(q3(a, True))
 
 c(a)
-#print(time() - start)
+print(time() - start)
