@@ -51,7 +51,7 @@ int main()
 {
     //ios_base::sync_with_stdio(false);
     //cin.tie(NULL);
-    //Main Prog
+    //Main Prg
     for(int i = 0; i < 10000; i++)
         nn[i] = i*2+1;
     gnl();
