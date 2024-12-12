@@ -1,73 +1,97 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <cmath>
+#include <vector>
+#include <unordered_map>
+#include <string>
+#include <unordered_set>
 
 using namespace std;
 
-const string alph = "abcdefghijklmnopqrstuvwxy";
-const string Alph = "ABCDEFGHIJKLMNOPQRSTUVWXY";
+unordered_map<char, int> conversion;
+vector<int> order;
+int n;
+int memo[(1 << 18)][18][18];
 
-signed main() {
-  string s;
-  cin >> s;
-  auto t1 = chrono::high_resolution_clock::now();
-  // build simul equations
-  vector<vector<int>> eqs;
-  for (int i=0; i<5; i++) {
-    for (int j=0; j<5; j++) {
-      vector<int> eq(26);
-      int id = i*5+j;
-      eq[id] = 1;
-      if (i>0) eq[id-5] = 1;
-      if (j>0) eq[id-1] = 1;
-      if (i<4) eq[id+5] = 1;
-      if (j<4) eq[id+1] = 1;
-      if (s.find(alph[id]) != string::npos) eq[25] = 1;
-      if (s.find(Alph[id]) != string::npos) eq[25] = 2;
-      eqs.push_back(eq);
-    }
-  }
-  // now solve it by complete search
-  vector<int> sol(25);
-  int ptr = 0;
-  function<bool()> solve = [&]() {
-    bool good = true;
-    for (int i=0; i<25; i++) {
-      bool usable = true;
-      for (int j=ptr; j<25; j++) {
-        if (eqs[i][j] != 0) usable = false;
-      }
-      if (usable) {
-        int sum = eqs[i][25];
-        for (int j=0; j<ptr; j++) {
-          sum += eqs[i][j] * sol[j];
-        }
-        if (sum % 3 != 0) good = false;
-      }
-    }
-    if (!good) {
-      return false;
-    }
-    if (ptr == 25) {
-      return true;
-    }
-    for (int i=0; i<3; i++) {
-      sol[ptr++] = i;
-      if (solve()) return true;
-      --ptr;
-    }
-    return false;
-  };
-  bool res = solve();
-  if (res) {
-    for (int i=0; i<25; i++) {
-      if (sol[i] == 0) continue;
-      if (sol[i] == 1) cout << alph[i];
-      if (sol[i] == 2) cout << Alph[i];
-    }
-    cout << "\n";
-  } else {
-    cout << "IMPOSSIBLE\n";
-  }
-  auto t2 = chrono::high_resolution_clock::now();
-  cout << chrono::duration_cast<chrono::milliseconds>(t2-t1).count() << "ms\n";
-  return 0;
+pair<int, pair<int, int>> CheckPrefix(vector<int> order) {
+
+	int a = 26; int b = 26;
+	for (int i = 0; i < order.size(); i++) {
+		int j = order[i];
+		if (j > b) {
+			return { 1, {0, 0} };
+		}
+		if (j > a) {
+			b = j;
+		}
+		else {
+			a = j;
+		}
+	}
+	return { 0, {a + 1, b + 1} };
+}
+
+
+int Construct(int remaining, int a, int b) {
+
+	if (remaining == 0) {
+		return 1;
+	}
+
+	int total = 0;
+
+	if (memo[remaining][a][b] != 0) {
+		return memo[remaining][a][b] - 1;
+	}
+
+
+	for (int element = 0; element < n; element++) {
+		int next_a = a; int next_b = b;
+		if ((remaining & (1 << element)) == 0) {
+			continue;
+		}
+		if (element > b) {
+			continue;
+		}
+		else if (element > a) {
+			next_b = element;
+		}
+		else {
+			next_a = element;
+		}
+
+		total += Construct(remaining - (1 << element), next_a, next_b);
+	}
+
+	memo[remaining][a][b] = total + 1;
+	return total;
+}
+
+
+int main() {
+
+	string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	for (int i = 0; i < 26; i++) {
+		conversion[letters[i]] = i;
+	}
+	cin >> n;
+
+	int remaining = (1 << n) - 1;
+
+	string prefix; cin >> prefix;
+
+	for (int i = 0; i < prefix.size(); i++) {
+		order.push_back(conversion[prefix[i]]);
+		remaining = remaining - (1 << conversion[prefix[i]]);
+	}
+
+	pair<int, pair<int, int>> Checker = CheckPrefix(order);
+
+	if (Checker.first == 1) {
+		cout << 0;
+		return 0;
+	}
+
+	int total = Construct(remaining, Checker.second.first, Checker.second.second);
+	cout << total;
+
 }

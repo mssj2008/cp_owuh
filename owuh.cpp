@@ -18,62 +18,92 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 
-int cl = 1;
-
-int nn[10000];
-
-void rn(int n,int i)
+string parse_state(vector<string> &ps)
 {
-    for(int i = i+n; i<10000; i += n)
-    {
-        nn[i] = -1;
-    }
+    return ps[0] + " " + ps[1] + " " + ps[2] + " " + ps[3];
 }
 
-void gnl()
+vector<string> get_state(string &ps)
 {
-while(cl < 10000)
-{
-    int i = cl/2;
-    while(nn[i] == -1)
-    {
-        i++;
-        if(i == 10000)
-            return;
-    }
-    cl = nn[i];
-    rn(cl,cl/2);
-}
+    stringstream ss(ps);
+    vector<string> ans;
+    string s;
+    while(ss >> s)
+        ans.push_back(s);
+    return ans;
 }
 
+void move(vector<string> &ps, int take,int put)
+{
+    if(ps[put] == "0")
+        ps[put].pop_back();
+    ps[put].push_back(ps[take].back());
+    ps[take].pop_back();
+    if(ps[take].length() == 0)
+        ps[take].push_back('0');
+}
 
 int main()
 {
+    vector<string> pegs(4);
+    vector<string> target(4);
+    vector<string> pegstmp(4);
+    unordered_set<string> visited;
+    //string s = "12";
+    //s.push_back('3');
+    //cout << s << endl;
+    //return 0;
+    //vector<vector<int>> moves = {{}}
     //ios_base::sync_with_stdio(false);
     //cin.tie(NULL);
     //Main Prg
-    for(int i = 0; i < 10000; i++)
-        nn[i] = i*2+1;
-    gnl();
-    int num; cin >> num;
-    for(int i=num-1; i > 0; i--)
+    cin >> pegs[0] >> pegs[1] >> pegs[2] >> pegs[3];
+    //string target;
+    // cin >> target;
+    cin >> target[0] >> target[1] >> target[2] >> target[3];
+    visited.insert(parse_state(pegs));
+    queue<vector<string>> bfs;
+    queue<int> bfsmvs;
+    bfs.push(pegs);
+    bfsmvs.push(0);
+    //cout << bfs.front()[0] << endl;
+    while(!bfs.empty())
     {
-        if(i%2 == 0) continue;
-        if(nn[i/2] != -1)
+        pegs = bfs.front();
+        pegstmp = pegs;
+        bfs.pop();
+        int mv = bfsmvs.front()+1;
+        bfsmvs.pop();
+        for(int take = 0; take < 4; take++)
         {
-        cout << nn[i/2] << " ";
-        break;
+            for(int put = 0; put < 4; put++)
+            {   
+                
+                if(put == take)
+                    continue;
+                if(pegs[take] == "0")
+                    continue;
+                if(pegs[put].length() >= 4)
+                    continue;
+                //cout << "i wanna peg haveen" << endl;
+                pegstmp = pegs;
+                move(pegstmp,take,put);
+                //cout << parse_state(pegstmp) << endl;
+                if(visited.count(parse_state(pegstmp)) != 0)
+                    continue;
+                if(target == pegstmp)
+                {
+                    cout << mv << endl;
+                    exit(0);
+                }
+                //pegs = pegstmp;
+                visited.insert(parse_state(pegstmp));
+                bfs.push(pegstmp);
+                bfsmvs.push(mv);
+            }
         }
     }
-    for(int i = num+1; i < 10000; i++)
-    {
-        if(i%2==0) continue;
-        if(nn[i/2] != -1)
-        {
-            cout << nn[i/2] << endl;
-            break;
-        }
-    }
+    
     return 0;
 }
 

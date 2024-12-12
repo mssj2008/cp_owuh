@@ -1,73 +1,74 @@
-from string import ascii_uppercase, ascii_lowercase
+from functools import lru_cache  
+# cache is Python 3.9+ only, so it's risky unless 
+# you know the version of Python your teacher is using
+from collections import deque, defaultdict
+from math import comb as choose
+from string import ascii_uppercase
+import time
 
 
-def press_button(grid, x, y):
-    assert 0 <= x < 5 and 0 <= y < 5
-    grid = [[i for i in j] for j in grid]
-    grid[x][y] = (grid[x][y] + 1) % 3
-    if x != 0:
-        grid[x - 1][y] = (grid[x - 1][y] + 1) % 3
-    if x != 4:
-        grid[x + 1][y] = (grid[x + 1][y] + 1) % 3
-
-    if y != 0:
-        grid[x][y - 1] = (grid[x][y - 1] + 1) % 3
-    if y != 4:
-        grid[x][y + 1] = (grid[x][y + 1] + 1) % 3
-    return [[i for i in j] for j in grid]
+def letter_to_number(x):
+    return ascii_uppercase.find(x) + 1
 
 
-def combinations():
-    output = []
-    for i in range(3):
-        for j in range(3):
-            for k in range(3):
-                for l in range(3):
-                    for m in range(3):
-                        output.append([i, j, k, l, m])
-    return output
+def number_to_letter(x):
+    return ascii_uppercase[x - 1]
+
+
+@lru_cache(maxsize=None)
+def num_answers_with_sum_x_beginning_with_y(x, y):
+    # print(x, number_to_letter(y))
+    if x == y:
+        return 1
+    if x < y:
+        return 0
+    if y < 1:
+        return 0
+    if x == 0:
+        return 0
+    total = 0
+
+    for next_letter in range(1, 27):
+        if next_letter == y:
+            continue
+        if next_letter > x - y:
+            break
+        total += num_answers_with_sum_x_beginning_with_y(x - y, next_letter)
+
+    return total
+
+
+def solve(word):
+    score = 0
+    for i in word:
+        score += letter_to_number(i)
+
+    total = 0
+
+    for i in range(len(word)):
+        for letter in range(1, letter_to_number(word[i])):
+            if i > 0:
+                if number_to_letter(letter) == word[i - 1]:
+                    continue
+            total += num_answers_with_sum_x_beginning_with_y(score, letter)
+
+        score -= letter_to_number(word[i])
+
+    return total + 1
 
 
 if __name__ == "__main__":
-    current_lighting = [[0] * 5 for _ in range(5)]
-    c = input()
-    for char in c:
-        capitalisation = 2 if char in ascii_uppercase else 1
-        char = char.lower()
-        row = ascii_lowercase.index(char) // 5
-        col = ascii_lowercase.index(char) % 5
+    a = time.time()
+    word = input().upper().strip()
+    print(solve(word))
+    print(time.time()-a)
 
-        current_lighting[row][col] = capitalisation
+"""
+num answers with sum x that begin with the number y
+= number of answers with sum x-y that *don't* begin with the number y
 
-    for top_row in combinations():
-        answer = ""
-        grid = [[i for i in j] for j in current_lighting]
-        for i in range(5):
-            for j in range(top_row[i]):
-                grid = press_button(grid, 0, i)
-            if top_row[i] == 2:
-                answer += ascii_uppercase[i]
-            elif top_row[i] == 1:
-                answer += ascii_lowercase[i]
 
-        for row in range(1, 5):
-            for col in range(5):
-                if grid[row - 1][col] == 0:
-                    continue
-
-                elif grid[row - 1][col] == 1:
-                    grid = press_button(grid, row, col)
-                    grid = press_button(grid, row, col)
-                    answer += ascii_uppercase[5*row+col]
-                else:
-                    grid = press_button(grid, row, col)
-                    answer += ascii_lowercase[5*row+col]
-
-        for i in range(5):
-            if grid[4][i] != 0:
-                break
-        else:
-            print(answer)
-            exit()
-
-    print("Impossible")
+5 A
+4 B 4 C 4 D 4 E 4 
+ 
+"""
