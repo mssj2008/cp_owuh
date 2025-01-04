@@ -25,7 +25,29 @@ int main()
     //ios_base::sync_with_stdio(false);
     //cin.tie(NULL);
     //Main Prog
-    unordered_map<int,vector<int>> adj;
+    int tt; cin >> tt;
+    while(tt--)
+    {
+    int n,m;
+    vector<int> words;
+    cin >> n >> m;
+    while(n--)
+    {
+        string s; cin>>s;
+        words.push_back(s.size());
+    }
+    //sort(words.begin(),words.end());
+    int x = 0;
+    for(int i = 0; i < words.size(); i++)
+    {
+        m -= words[i];
+        if(m >= 0)
+            x++;
+        else
+            break;
+    }
+    cout << x << "\n";
+    }
     return 0;
 }
 
